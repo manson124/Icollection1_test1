@@ -5,93 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Icollection1_test1
+namespace Icollection1_test11
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            BoxCollection bxList = new BoxCollection();
-
-            bxList.Add(new Box(10, 4, 6));
-            bxList.Add(new Box(4, 6, 10));
-
-            bxList.Add(new Box(10, 4, 6));
-        }
-    }
-
-
-    public class Box
-    {
-        public int Height { get; set; }
-        public int Width { get; set; }
-        public int Length { get; set; }
-
-        public Box(int height, int width, int lenth)
-        {
-            this.Height = height;
-            this.Width = width;
-            this.Length = Length;
-        }
-
-        // Defines equality using the
-        // BoxSameDimensions equality comparer.
-        public bool Equals(Box other)
-        {
-            if (new BoxSameDimensions().Equals(this, other))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        //public override bool Equals(object obj)
-        //{
-        //    return base.Equals(obj);
-        //}
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-
-        }
-    }
-
-    // Defines two boxes as equal if they have the same dimensions.
-    public class BoxSameDimensions : EqualityComparer<Box>
-    {
-
-        public override bool Equals(Box b1, Box b2)
-        {
-            if (b1.Height == b2.Height && b1.Length == b2.Length
-                                && b1.Width == b2.Width)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-        public override int GetHashCode(Box bx)
-        {
-            int hCode = bx.Height ^ bx.Length ^ bx.Width;
-            return hCode.GetHashCode();
-        }
-
-    }
-
     public class BoxCollection : ICollection<Box>
     {
         // The generic enumerator obtained from IEnumerator<Box>
         // by GetEnumerator can also be used with the non-generic IEnumerator.
         // To avoid a naming conflict, the non-generic IEnumerable method
         // is explicitly implemented.
+
+        public IEnumerator<Box> GetEnumerator()
+        {
+            return new BoxEnumerator(this);
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return new BoxEnumerator(this);
+        }
 
         // The inner collection to store objects.
         private List<Box> innerCol;
@@ -104,7 +34,7 @@ namespace Icollection1_test1
         // Adds an index to the collection.
         public Box this[int index]
         {
-            get { return innerCol[index]; }
+            get { return (Box)innerCol[index]; }
             set { innerCol[index] = value; }
         }
 
@@ -140,6 +70,7 @@ namespace Icollection1_test1
                     found = true;
                 }
             }
+
             return found;
         }
 
@@ -212,16 +143,5 @@ namespace Icollection1_test1
             }
             return result;
         }
-
-        public IEnumerator<Box> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
     }
-
 }
